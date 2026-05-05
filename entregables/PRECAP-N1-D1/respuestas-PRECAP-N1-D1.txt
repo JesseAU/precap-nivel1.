@@ -1,0 +1,9 @@
+FEEDBACK:Videos:
+1. ¿Alguna lección fue confusa o el instructor asumió algo que no tenías claro?
+Respuesta: Me rayó un poco la parte de los permisos porque al hacer el ls -la después del chmod 600, los permisos se veían casi iguales en mi Git Bash. Pensé que lo estaba haciendo mal, pero luego entendí que es por cómo Windows maneja esas cosas.
+
+2. ¿Qué comando te costó más reproducir en tu propia terminal?
+Respuesta: El de matar procesos (kill). Cometí el error de novato de escribir "kill [PID]" tal cual estaba en la guía en lugar de poner el número del proceso. Me dio error un par de veces hasta que me fijé bien en el output del ps aux.
+
+3. ¿Pudiste seguir todas las lecciones sin bloqueos? Si no, ¿cuál te trabó?
+Respuesta: El primer bloqueo fue nada más empezar. Intenté clonar el repo con el punto al final del nombre y Windows me mandó a volar con un error de "Invalid argument". Tuve que renombrar la carpeta local para poder avanzar.

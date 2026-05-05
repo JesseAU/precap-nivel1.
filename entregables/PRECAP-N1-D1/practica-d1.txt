@@ -1,0 +1,124 @@
+COMANDOS PRACTICA HOLA MUNDO:
+
+Zaidu@DESKTOP-B122IHD MINGW64 ~/Desktop/precap-nivel1 (feature/dia1-linux)
+$ ##hola mundo
+
+Zaidu@DESKTOP-B122IHD MINGW64 ~/Desktop/precap-nivel1 (feature/dia1-linux)
+$ echo "hola, bash"
+hola, bash
+
+Zaidu@DESKTOP-B122IHD MINGW64 ~/Desktop/precap-nivel1 (feature/dia1-linux)
+$ echo $SHELL
+/usr/bin/bash
+
+Zaidu@DESKTOP-B122IHD MINGW64 ~/Desktop/precap-nivel1 (feature/dia1-linux)
+$ echo $0
+/usr/bin/bash
+
+=========================================
+BLOQUE A: COMANDOS Y NAVEGACIÓN
+=========================================
+
+1. whoami && pwd && date
+Zaidu
+/c/Users/Zaidu/Desktop/precap-nivel1
+Tue May 5 12:27:29 HPS 2026
+
+2. mkdir ~/practica-precap && cd ~/practica-precap && pwd
+/c/Users/Zaidu/practica-precap
+
+3. echo "OpenClaw practica" > archivo1.txt && cat archivo1.txt
+OpenClaw practica
+
+4. cp archivo1.txt archivo2.txt && ls -la
+total 34
+drwxr-xr-x 1 Zaidu 197609  0 May  5 12:28 ./
+drwxr-xr-x 1 Zaidu 197609  0 May  5 12:27 ../
+-rw-r--r-- 1 Zaidu 197609 18 May  5 12:27 archivo1.txt
+-rw-r--r-- 1 Zaidu 197609 18 May  5 12:28 archivo2.txt
+
+5. mv archivo2.txt renombrado.txt && ls -la
+total 34
+drwxr-xr-x 1 Zaidu 197609  0 May  5 12:28 ./
+drwxr-xr-x 1 Zaidu 197609  0 May  5 12:27 ../
+-rw-r--r-- 1 Zaidu 197609 18 May  5 12:27 archivo1.txt
+-rw-r--r-- 1 Zaidu 197609 18 May  5 12:28 renombrado.txt
+
+6. cd .. && ls -la | grep practica
+drwxr-xr-x 1 Zaidu 197609        0 May  5 12:28 practica-precap/
+
+
+
+
+================================================================================
+EVIDENCIA DE PRÁCTICA - DÍA 1 (LINUX TERMINAL)
+================================================================================
+
+--------------------------------------------------------------------------------
+BLOQUE A: COMANDOS Y NAVEGACIÓN
+--------------------------------------------------------------------------------
+
+1. whoami && pwd && date
+Zaidu
+/c/Users/Zaidu/Desktop/precap-nivel1
+Tue May 5 12:27:29 HPS 2026
+
+2. mkdir ~/practica-precap && cd ~/practica-precap && pwd
+/c/Users/Zaidu/practica-precap
+
+3. echo "OpenClaw practica" > archivo1.txt && cat archivo1.txt
+OpenClaw practica
+
+4. cp archivo1.txt archivo2.txt && ls -la
+total 34
+drwxr-xr-x 1 Zaidu 197609  0 May  5 12:28 ./
+drwxr-xr-x 1 Zaidu 197609  0 May  5 12:27 ../
+-rw-r--r-- 1 Zaidu 197609 18 May  5 12:27 archivo1.txt
+-rw-r--r-- 1 Zaidu 197609 18 May  5 12:28 archivo2.txt
+
+5. mv archivo2.txt renombrado.txt && ls -la
+total 34
+drwxr-xr-x 1 Zaidu 197609  0 May  5 12:28 ./
+drwxr-xr-x 1 Zaidu 197609  0 May  5 12:27 ../
+-rw-r--r-- 1 Zaidu 197609 18 May  5 12:27 archivo1.txt
+-rw-r--r-- 1 Zaidu 197609 18 May  5 12:28 renombrado.txt
+
+6. cd .. && ls -la | grep practica
+drwxr-xr-x 1 Zaidu 197609        0 May  5 12:28 practica-precap/
+
+--------------------------------------------------------------------------------
+BLOQUE B: PERMISOS, VARIABLES Y PROCESOS
+--------------------------------------------------------------------------------
+
+B1. Permisos (chmod)
+ls -la archivo1.txt
+-rw-r--r-- 1 Zaidu 197609 18 May  5 12:27 archivo1.txt
+
+chmod 600 archivo1.txt && ls -la archivo1.txt
+-rw------- 1 Zaidu 197609 18 May  5 12:27 archivo1.txt
+
+chmod 644 archivo1.txt && ls -la archivo1.txt
+-rw-r--r-- 1 Zaidu 197609 18 May  5 12:27 archivo1.txt
+
+B2. Variables de Entorno
+echo $HOME
+/c/Users/Zaidu
+
+echo $OPENCLAW_TEST
+funcionando
+
+echo $OPENCLAW_ENV
+desarrollo
+
+B3. Procesos (ps y kill)
+ps aux | head -5
+      PID    PPID    PGID     WINPID   TTY         UID    STIME COMMAND
+      918     615     918       5632  pty0      197609 12:52:00 /usr/bin/ps
+      615     614     615      10120  pty0      197609 11:20:25 /usr/bin/bash
+
+ps aux | grep sleep
+      929     615     929      22424  pty0      197609 12:52:01 /usr/bin/sleep
+
+kill 929
+[1]+  Terminated              sleep 60
+
