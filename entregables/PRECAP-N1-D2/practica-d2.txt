@@ -1,0 +1,65 @@
+================================================================================
+BLOQUE A: CICLO DE VIDA Y PROCESOS (DÍA 2 - DOCKER)
+================================================================================
+
+1. docker --version && docker info | head -10
+Docker version 28.5.1, build e180ab8
+Client:
+ Version:    28.5.1
+ Context:    desktop-linux
+ Debug Mode: false
+
+2. docker images (Listado de imágenes locales)
+REPOSITORY          TAG       IMAGE ID       CREATED        SIZE
+nginx               latest    6e23479198b9   2 weeks ago    237MB
+hello-world         latest    f9078146db2e   6 weeks ago    20.4kB
+(y otras imágenes de laboratorios previos)
+
+3. docker run -d --name mi-nginx nginx
+(Error de conflicto resuelto: el contenedor ya estaba corriendo desde hace 45 minutos)
+
+4. docker ps (Contenedores activos)
+CONTAINER ID   IMAGE     STATUS          PORTS     NAMES
+4812e05d313e   nginx     Up 45 minutes   80/tcp    mi-nginx
+
+5. docker logs mi-nginx (Logs de ejecución)
+/docker-entrypoint.sh: Configuration complete; ready for start up
+2026/05/07 14:09:20 [notice] 1#1: start worker processes
+2026/05/07 14:09:20 [notice] 1#1: start worker process 29...
+
+6. docker exec -it mi-nginx bash (Acceso al contenedor)
+root@4812e05d313e:/# ls /etc/nginx
+conf.d	fastcgi_params	mime.types  modules  nginx.conf  scgi_params  uwsgi_params
+root@4812e05d313e:/# exit
+exit
+
+7. docker stop mi-nginx && docker rm mi-nginx (Limpieza final)
+mi-nginx
+mi-nginx
+
+
+================================================================================
+BLOQUE B: REDES, PUERTOS Y VOLÚMENES
+================================================================================
+
+1. docker network create mi-red
+ID: 175f7ed8b804a8ee8d69d2b8f5e3e7c73627f401b616f626660f8a6e8706ec97
+
+2. Comunicación entre contenedores (Ping por nombre)
+docker exec cliente ping servidor -c 3
+PING servidor (172.18.0.2): 56 data bytes
+64 bytes from 172.18.0.2: seq=0 ttl=64 time=0.290 ms
+3 packets transmitted, 3 packets received, 0% packet loss
+
+3. Mapeo de Puertos
+docker run -d --name nginx-pub -p 8080:80 nginx
+Acceso confirmado en http://localhost:8080 (Welcome to Nginx)
+
+4. Volúmenes y Persistencia
+docker run --rm -v mi-volumen://data alpine cat //data/hola.txt
+Output: OpenClaw vive aqui
+(Verificado: los datos persisten después de eliminar el contenedor)
+
+
+
+
