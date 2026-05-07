@@ -1,58 +1,40 @@
-COMANDOS PRACTICA HOLA MUNDO:
-
-Zaidu@DESKTOP-B122IHD MINGW64 ~/Desktop/precap-nivel1 (feature/dia1-linux)
-$ ##hola mundo
-
-Zaidu@DESKTOP-B122IHD MINGW64 ~/Desktop/precap-nivel1 (feature/dia1-linux)
-$ echo "hola, bash"
-hola, bash
-
-Zaidu@DESKTOP-B122IHD MINGW64 ~/Desktop/precap-nivel1 (feature/dia1-linux)
-$ echo $SHELL
-/usr/bin/bash
-
-Zaidu@DESKTOP-B122IHD MINGW64 ~/Desktop/precap-nivel1 (feature/dia1-linux)
-$ echo $0
-/usr/bin/bash
-
-=========================================
-BLOQUE A: COMANDOS Y NAVEGACIÓN
-=========================================
+================================================================================
+EVIDENCIA DE PRÁCTICA - DÍA 1 (USANDO WARP TERMINAL)
+================================================================================
 
 1. whoami && pwd && date
 Zaidu
-/c/Users/Zaidu/Desktop/precap-nivel1
-Tue May 5 12:27:29 HPS 2026
+/c/Users/Zaidu/Desktop/BashWarp
+ju., 7 de may. de 2026 9:36:40
 
-2. mkdir ~/practica-precap && cd ~/practica-precap && pwd
-/c/Users/Zaidu/practica-precap
+2. ls -la ~ (Listado de directorio Home)
+total 164205
+drwxr-xr-x 1 Zaidu 197609 0 may. 5 18:45 ./
+...
+drwxr-xr-x 1 Zaidu 197609 0 may. 5 12:28 practica-precap/
+...
+drwxr-xr-x 1 Zaidu 197609 0 may. 7 08:50 'WPS Cloud Files'/
 
 3. echo "OpenClaw practica" > archivo1.txt && cat archivo1.txt
 OpenClaw practica
 
 4. cp archivo1.txt archivo2.txt && ls -la
-total 34
-drwxr-xr-x 1 Zaidu 197609  0 May  5 12:28 ./
-drwxr-xr-x 1 Zaidu 197609  0 May  5 12:27 ../
--rw-r--r-- 1 Zaidu 197609 18 May  5 12:27 archivo1.txt
--rw-r--r-- 1 Zaidu 197609 18 May  5 12:28 archivo2.txt
+total 18
+drwxr-xr-x 1 Zaidu 197609  0 may.  7 09:37 ./
+drwxr-xr-x 1 Zaidu 197609  0 may.  7 09:23 ../
+-rw-r--r-- 1 Zaidu 197609 18 may.  7 09:37 archivo1.txt
+-rw-r--r-- 1 Zaidu 197609 18 may.  7 09:37 archivo2.txt
 
 5. mv archivo2.txt renombrado.txt && ls -la
-total 34
-drwxr-xr-x 1 Zaidu 197609  0 May  5 12:28 ./
-drwxr-xr-x 1 Zaidu 197609  0 May  5 12:27 ../
--rw-r--r-- 1 Zaidu 197609 18 May  5 12:27 archivo1.txt
--rw-r--r-- 1 Zaidu 197609 18 May  5 12:28 renombrado.txt
+total 18
+drwxr-xr-x 1 Zaidu 197609  0 may.  7 09:37 ./
+drwxr-xr-x 1 Zaidu 197609  0 may.  7 09:23 ../
+-rw-r--r-- 1 Zaidu 197609 18 may.  7 09:37 archivo1.txt
+-rw-r--r-- 1 Zaidu 197609 18 may.  7 09:37 renombrado.txt
 
 6. cd .. && ls -la | grep practica
-drwxr-xr-x 1 Zaidu 197609        0 May  5 12:28 practica-precap/
+drwxr-xr-x 1 Zaidu 197609        0 may.  5 12:28 practica-precap/
 
-
-
-
-================================================================================
-EVIDENCIA DE PRÁCTICA - DÍA 1 (LINUX TERMINAL)
-================================================================================
 
 --------------------------------------------------------------------------------
 BLOQUE A: COMANDOS Y NAVEGACIÓN
@@ -87,38 +69,42 @@ drwxr-xr-x 1 Zaidu 197609  0 May  5 12:27 ../
 drwxr-xr-x 1 Zaidu 197609        0 May  5 12:28 practica-precap/
 
 --------------------------------------------------------------------------------
-BLOQUE B: PERMISOS, VARIABLES Y PROCESOS
+BLOQUE B: PERMISOS, VARIABLES Y PROCESOS (EVIDENCIA EN WARP)
 --------------------------------------------------------------------------------
 
-B1. Permisos (chmod)
-ls -la archivo1.txt
--rw-r--r-- 1 Zaidu 197609 18 May  5 12:27 archivo1.txt
-
-chmod 600 archivo1.txt && ls -la archivo1.txt
--rw------- 1 Zaidu 197609 18 May  5 12:27 archivo1.txt
-
-chmod 644 archivo1.txt && ls -la archivo1.txt
--rw-r--r-- 1 Zaidu 197609 18 May  5 12:27 archivo1.txt
-
-B2. Variables de Entorno
-echo $HOME
-/c/Users/Zaidu
-
-echo $OPENCLAW_TEST
-funcionando
-
-echo $OPENCLAW_ENV
+1. Persistencia de Variables de Entorno
+source ~/.bashrc && echo $OPENCLAW_ENV
 desarrollo
 
-B3. Procesos (ps y kill)
-ps aux | head -5
+2. Listado de Procesos (ps aux)
+ps aux | head -10
       PID    PPID    PGID     WINPID   TTY         UID    STIME COMMAND
-      918     615     918       5632  pty0      197609 12:52:00 /usr/bin/ps
-      615     614     615      10120  pty0      197609 11:20:25 /usr/bin/bash
+     1434       1    1434      19816  cons3     197609 09:34:13 /usr/bin/bash
+     1286       1    1286      25544  cons2     197609 09:30:34 /usr/bin/bash
+     1075       1    1075      26140  cons0     197609 09:04:51 /usr/bin/bash
+     1893    1434    1893      24624  cons3     197609 09:44:01 /usr/bin/ps
+
+3. Gestión de Procesos (sleep y kill)
+sleep 60 &
+[1] 1917
+[2] 1932
 
 ps aux | grep sleep
-      929     615     929      22424  pty0      197609 12:52:01 /usr/bin/sleep
+     1917    1434    1917      20832  cons3     197609 09:44:12 /usr/bin/sleep
+     1932    1434    1932      25828  cons3     197609 09:44:19 /usr/bin/sleep
 
-kill 929
-[1]+  Terminated              sleep 60
+kill 1917
+[1]-  Terminated              sleep 60
 
+4. Modificación de Permisos (chmod)
+chmod 600 ~/practica-precap/archivo1.txt && ls -la ~/practica-precap/
+total 34
+drwxr-xr-x 1 Zaidu 197609  0 may.  5 12:28 ./
+drwxr-xr-x 1 Zaidu 197609  0 may.  7 09:43 ../
+-rw------- 1 Zaidu 197609 18 may.  5 12:27 archivo1.txt
+-rw-r--r-- 1 Zaidu 197609 18 may.  5 12:28 renombrado.txt
+
+5. Variables Globales
+echo $HOME && echo $PATH
+/c/Users/Zaidu
+/c/Users/Zaidu/bin:/usr/local/bin:/usr/bin:/bin:/opt/bin:/c/Windows/system32:/c/Windows:/c/Program Files/Docker/Docker/resources/bin:/c/Users/Zaidu/AppData/Local/Programs/Warp/bin (truncado)
