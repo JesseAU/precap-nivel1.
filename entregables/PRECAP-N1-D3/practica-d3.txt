@@ -1,0 +1,49 @@
+================================================================================
+BLOQUE A: MI PRIMER DOCKER COMPOSE (Nginx + Redis)
+================================================================================
+
+1. docker compose up -d
+[+] Running 3/3
+ ✔ Network compose-practica_default  Created
+ ✔ Container mi-cache                Started
+ ✔ Container mi-web                  Started
+
+2. docker compose ps
+NAME       IMAGE     STATUS              PORTS
+mi-cache   redis     Up About a minute   6379/tcp
+mi-web     nginx     Up About a minute   0.0.0.0:8080->80/tcp
+
+3. Verificación Navegador
+Acceso confirmado a http://localhost:8080 (Welcome to nginx!)
+
+4. docker compose logs (resumen)
+mi-web    | /docker-entrypoint.sh: Configuration complete; ready for start up
+mi-cache  | 1:M 08 May 2026 16:37:11.234 * Ready to accept connections tcp
+
+
+================================================================================
+BLOQUE B: COMPOSE CON REDES Y VOLÚMENES
+================================================================================
+
+1. docker compose -f docker-compose-completo.yml up -d
+[+] Running 5/5
+ ✔ Network compose-practica_red-interna  Created
+ ✔ Volume compose-practica_datos-app     Created
+ ✔ Volume compose-practica_datos-db      Created
+ ✔ Container db-servicio                 Started
+ ✔ Container app-servicio                Started
+
+2. Verificación de Red y Volúmenes
+docker network ls | grep red-interna -> compose-practica_red-interna (OK)
+docker volume ls | grep datos -> compose-practica_datos-app, compose-practica_datos-db (OK)
+
+3. docker compose down
+[+] Running 3/3
+ ✔ Container app-servicio  Removed
+ ✔ Container db-servicio   Removed
+ ✔ Network red-interna     Removed
+
+4. Verificación de Persistencia (Post-down)
+docker volume ls | grep datos
+(Los volúmenes PERSISTEN después del comando down, garantizando la seguridad de los datos).
+

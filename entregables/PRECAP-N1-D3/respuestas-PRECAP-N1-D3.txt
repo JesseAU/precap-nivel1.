@@ -1,0 +1,38 @@
+================================================================================
+RESPUESTAS TÉCNICAS - DÍA 3 (DOCKER COMPOSE)
+================================================================================
+
+FEEDBACK:Videos:
+1. ¿La diferencia entre Dockerfile y docker-compose.yml quedó clara?
+Respuesta: Sí. El Dockerfile sirve para crear/construir una imagen desde cero (la receta), mientras que el docker-compose.yml sirve para orquestar y levantar contenedores que ya existen.
+
+2. ¿El YAML con su indentación causó problemas?
+Respuesta: Al principio es delicado porque un espacio de más rompe el archivo, pero usando un editor como VS Code es fácil detectar errores de estructura.
+
+3. ¿Para qué sirve depends_on sin mirar apuntes?
+Respuesta: Sirve para establecer un orden de arranque. Obliga a que un contenedor espere a que otro esté listo antes de intentar iniciar.
+
+--------------------------------------------------------------------------------
+ANÁLISIS DEL COMPOSE DE OPENCLAW
+--------------------------------------------------------------------------------
+
+1. ¿OpenClaw usa una imagen pre-construida o un Dockerfile?
+Respuesta: Usa una imagen pre-construida (ghcr.io/openclaw/openclaw:latest). No necesitamos compilar el código, solo descargar la imagen oficial.
+
+2. ¿En qué puerto se accede a OpenClaw desde el navegador?
+Respuesta: En el puerto 3000 (localhost:3000). El mapeo es "3000:3000".
+
+3. ¿De qué servicio depende OpenClaw para funcionar?
+Respuesta: Depende de "ollama". Esto se define en la sección 'depends_on'.
+
+4. ¿Qué datos persisten en volúmenes?
+Respuesta: Persisten los datos de la base de datos y las configuraciones de los modelos de IA. Esto evita que los chats se borren al reiniciar el sistema.
+
+--------------------------------------------------------------------------------
+REFLEXIÓN FINAL
+--------------------------------------------------------------------------------
+¿Cuál es la diferencia entre docker compose down y docker compose down --volumes?
+Respuesta: 'down' solo borra los contenedores y redes, pero mantiene los datos. 'down --volumes' borra TODO, incluyendo los datos guardados en los discos virtuales. En OpenClaw nunca debemos usar --volumes si no queremos perder los chats.
+
+¿Qué fue lo más valioso del día?
+Respuesta: Entender que con un solo comando (docker compose up) puedo levantar una infraestructura compleja de IA sin configurar cada pieza manualmente.
