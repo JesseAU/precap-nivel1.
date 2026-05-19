@@ -1,0 +1,95 @@
+[ignoring loop detection]
+================================================================================
+ANÁLISIS TÉCNICO - DÍA 4 (LECTURA DE SEGURIDAD Y ARQUITECTURA)
+================================================================================
+
+--------------------------------------------------------------------------------
+SECCIÓN A: PASOS COMUNES DE LA GUÍA (CONFIGURACIÓN B - OPENROUTER)
+--------------------------------------------------------------------------------
+
+1. TABLA RAM/VRAM Y HARDWARE DEL USUARIO
+- Mi Hardware: Mi computadora no cuenta con los 8GB de VRAM necesarios para ejecutar modelos de lenguaje locales pesados (como Llama 3.1 8B a través de Ollama).
+- Configuración elegida: Configuración B (OpenClaw + OpenRouter).
+- Explicación: Al no tener suficiente VRAM para correr un LLM local, utilizaremos la API de OpenRouter. Esto delega la ejecución del modelo de inteligencia artificial a la nube, requiriendo cero consumo de VRAM en mi máquina.
+- Modelo recomendado: La guía sugiere el modelo gratuito "openrouter/openrouter/auto:free" (modo adaptive) para el desarrollo y pruebas.
+
+2. REQUISITOS PREVIOS
+- Requisitos que ya cumplo: Docker Desktop instalado con la integración WSL2 activa, distribución de Ubuntu instalada en WSL2, y familiaridad con comandos de consola (adquirida en los Días 1 a 3).
+- Requisitos pendientes: Configurar la API Key de OpenRouter y realizar el despliegue del docker-compose.yml específico para esta arquitectura.
+
+3. PASO 1: CLONAR Y PREPARAR DIRECTORIOS
+- Uso de /mnt/c/: La guía utiliza la ruta "/mnt/c/users/usuario/documentos" porque es el punto de montaje de la unidad C: de Windows dentro del subsistema Linux (WSL2). Esto permite que los archivos sean editables tanto desde Windows (VS Code) como desde Linux de manera transparente.
+- Comandos del Día 1 usados: "mkdir" (para crear directorios), "cd" (para navegar a la carpeta) y "chown" (para cambiar el propietario de los archivos).
+- Importancia de chown: El comando "sudo chown -R $USER:$USER .openclaw" es crítico. Los contenedores de Docker corren con usuarios específicos (como 'node'). Si no cambiamos el propietario de la carpeta ".openclaw" al usuario activo de Linux, Docker se bloqueará con errores de "Permission Denied" al intentar escribir configuraciones y bases de datos locales.
+
+4. PASO 2: DOCKER-COMPOSE.YML
+- Imagen utilizada: ghcr.io/openclaw/openclaw:latest (imagen oficial y pre-construida en GitHub Container Registry).
+- Exposición de puertos ("127.0.0.1:18789:18789"): En lugar de usar "0.0.0.0:18789:18789" (que expondría el servicio a cualquier dispositivo de mi red local), se usa la IP de bucle local "127.0.0.1". Esto asegura que a OpenClaw solo se pueda acceder desde mi propia computadora, mitigando ataques externos directos de red.
+- Volumen mapeado: "./.openclaw:/home/node/.openclaw". Los archivos de configuración (como openclaw.json y bases de datos sqlite/workspace) se guardan localmente en la carpeta del host. Esto garantiza que si el contenedor se destruye o se actualiza, la configuración y el historial de chat persistan.
+
+5. PASO 3: ARCHIVO .ENV
+- Qué es un .env: Es un archivo de configuración utilizado para declarar variables de entorno de forma segura.
+- Variable interna: OPENROUTER_API_KEY=sk-or-v1-...
+- ¿Por qué no compartirlo?: Contiene la clave privada de OpenRouter que da acceso a créditos y consumo de modelos de IA. Compartirlo o subirlo a GitHub comprometería la cuenta y causaría gastos imprevistos. En el Día 1 aprendimos a configurar variables locales, el archivo .env actúa de manera similar pero a nivel de proyecto orquestado por Docker.
+
+6. PASO 4: VERIFICACIÓN
+- Qué se verifica: Que el contenedor 'openclaw-app' esté corriendo sin problemas y responda en http://localhost:18789.
+- Comandos asociados (Día 3): "docker compose ps" para verificar que el servicio esté en estado Up/Running, y "docker compose logs" en caso de que ocurra algún error durante el arranque inicial.
+
+--------------------------------------------------------------------------------
+ANÁLISIS A2: CONFIGURACIÓN A (ARQUITECTURA DE IA LOCAL - CONTEXTO)
+--------------------------------------------------------------------------------
+- Aunque usaré la Configuración B (OpenRouter) para evitar el cuello de botella del hardware, es vital comprender la Configuración A (Ollama Local):
+- Paso 5A (Ollama en compose): Ollama se incluye como un servicio en el compose para que inicie y se configure automáticamente en la misma red aislada de Docker. Esto permite usar "depends_on" para que OpenClaw no intente iniciar hasta que el servidor de Ollama esté listo.
+- Paso 6A (Descargar modelo): Se usa el comando "docker exec -it" para entrar al contenedor de Ollama y ejecutar la descarga del modelo ("ollama run llama3.1"). Esto es similar a cómo entramos al contenedor de nginx en el Día 2.
+- Paso 7A (Configurar OpenClaw): Es fundamental hacer "docker compose down" antes de modificar archivos JSON manuales. Si editamos la configuración con el contenedor encendido, OpenClaw podría sobreescribir nuestros cambios con los datos que mantiene en memoria intermedia (RAM), ignorando las ediciones manuales.
+
+--------------------------------------------------------------------------------
+SECCIÓN B1: ANÁLISIS DEL REPORTE DE SEGURIDAD
+--------------------------------------------------------------------------------
+
+1. ALCANCE DE LA AUDITORÍA
+- Áreas cubiertas: Dockerización, permisos en volúmenes, aislamiento de red y redireccionamiento loopback.
+- Exclusiones: Código fuente interno de OpenClaw y binarios raíz de Ollama. Importa saberlo porque si existe una vulnerabilidad de día cero en el código de node.js de OpenClaw, la auditoría no la detecta; por lo tanto, el aislamiento de red es nuestra principal línea de defensa.
+
+2. HALLAZGO 4.1 - EXPOSICIÓN DEL CONTENEDOR OLLAMA (SEVERIDAD ALTA)
+- Significado: Originalmente el puerto de Ollama (11434) se exponía de manera pública en la red (0.0.0.0), lo que permitía que cualquier persona conectada al mismo Wi-Fi enviara consultas a mi modelo de IA y consumiera mis recursos de hardware.
+- Solución: Se configuró el compose para que Ollama escuche en 0.0.0.0 pero únicamente dentro de la red interna de Docker. Fuera de ahí, solo se enlaza al loopback local (127.0.0.1), protegiendo el acceso.
+
+3. HALLAZGO 4.2 - ERROR DE CONEXIÓN Y PERSISTENCIA (SEVERIDAD ALTA)
+- Riesgo de persistencia: Si no mapeamos correctamente el volumen, al ejecutar "docker compose down -v" (parámetro de borrado de volúmenes) o tras una actualización agresiva, toda la base de datos de configuraciones de OpenClaw se corrompe o se borra definitivamente.
+- Mitigación: Mapeo estricto del volumen en el compose y evitar el uso de la bandera "-v" / "--volumes" al detener los servicios.
+
+4. HALLAZGO 4.3 - AUTORIZACIÓN OLLAMA ROOT (SEVERIDAD BAJA)
+- Explicación: Ollama corre como usuario Root dentro de su contenedor para poder acceder de forma directa a la GPU. Aunque es un riesgo de seguridad en servidores de producción, en este entorno local está mitigado por el aislamiento de red de Docker (si el contenedor es vulnerado, el atacante no puede salir al host de Windows).
+
+5. RIESGOS RESIDUALES Y CONCUSIÓN
+- Riesgos residuales: Posible corrupción de la base de datos local al actualizar OpenClaw y exposición de claves si se comparte por error el .env.
+- Mitigación: Añadir el archivo .env al .gitignore y realizar copias de seguridad de la carpeta ".openclaw" periódicamente. La Configuración B está aprobada siempre y cuando se implemente la autenticación local (modo token) en el gateway de openclaw.json.
+
+--------------------------------------------------------------------------------
+SECCIÓN B2: CHECKLIST DE VERIFICACIÓN (GATE DEL DÍA 6)
+--------------------------------------------------------------------------------
+1. Integración WSL2 en Docker Desktop: Si no está activa, Docker no puede comunicarse con los archivos de Ubuntu en WSL2 y los montajes de volumen fallarán. Se verifica en la configuración de Docker Desktop.
+2. Permisos chown a .openclaw: Si no se asignan, el contenedor dará error "Access Denied" en los logs y no arrancará.
+3. Contenedor openclaw-app en verde: Significa que no hubo errores en el script de arranque. Se verifica con "docker ps".
+4. Token guardado en openclaw.json: Si no se configura en modo "token", la interfaz web quedará abierta a cualquier persona en la red, o nos denegará el acceso.
+5. Comando de aprobación de dispositivo (Pairing): Comando "docker exec -it openclaw-app node openclaw.mjs devices approve ID". Necesario para autorizar el navegador a interactuar con el backend de OpenClaw.
+6. Selección del modelo según RAM: En mi caso, al usar OpenRouter (Config B), seleccionamos "openrouter/openrouter/auto:free" para evitar consumo de memoria local.
+7. Reiniciar contenedores tras cambios: Docker no lee cambios del .env o de archivos JSON mapeados en caliente; requiere un "docker compose restart" o "up -d" para recargar la configuración.
+
+--------------------------------------------------------------------------------
+SECCIÓN B3: ANTICIPACIÓN DE ERRORES (DÍAS 5 Y 6)
+--------------------------------------------------------------------------------
+
+1. ESCENARIO: Falla de conexión al daemon de Docker al levantar el compose
+- Causa probable: Docker Desktop no está iniciado en Windows o la integración con WSL2 se desactivó.
+- Herramienta de diagnóstico: Ejecutar "docker ps" en la consola de WSL2 para confirmar conexión. Si da error, iniciar Docker Desktop manualmente.
+
+2. ESCENARIO: Pantalla de error de OpenClaw en el navegador (HTTP 500 o similar)
+- Causa probable: Bloqueo de Gateway por falta de token o mala configuración en openclaw.json.
+- Herramienta de diagnóstico: Usar "nano .openclaw/openclaw.json" en WSL2 para reconfigurar el bloque "gateway" asignándole el modo "token" y los allowedOrigins correctos.
+
+3. ESCENARIO: Las configuraciones y chats se pierden tras reiniciar el sistema
+- Causa probable: Se ejecutó "docker compose down --volumes" o la ruta del host no se mapeó correctamente en el yml.
+- Herramienta de diagnóstico: Ejecutar "docker volume ls" para verificar si los datos siguen existiendo y comprobar la ruta relativa del archivo docker-compose.yml.
