@@ -1,9 +1,9 @@
 FEEDBACK:Videos:
 1. ¿La diferencia entre imagen y contenedor quedó clara? Si no — ¿qué parte fue confusa?
-Respuesta: 
+Respuesta: Sí, quedó muy clara. La imagen es la plantilla de solo lectura y estática (la "receta") que contiene el código y todo el entorno necesario para que funcione la aplicación. El contenedor es la instancia viva, activa y ejecutable de esa imagen (el "proceso en ejecución" aislado).
 
 2. ¿docker run hello-world funcionó sin errores? Si no — ¿qué error apareció?
-Respuesta: 
+Respuesta: Sí, funcionó perfectamente. Docker detectó que la imagen no estaba localmente, la descargó desde Docker Hub de forma automática, ejecutó el contenedor que imprimió el mensaje explicativo de Docker y luego finalizó su ejecución de manera exitosa.
 
 3. ¿Puedes explicar por qué Docker consume menos recursos que una VM sin mirar apuntes?
-Respuesta: 
+Respuesta: Sí. Una Máquina Virtual (VM) requiere un sistema operativo completo (Guest OS) y un hipervisor que emula hardware físico, consumiendo gigabytes de RAM y disco para cada instancia. Docker no emula hardware; comparte el kernel del sistema operativo anfitrión (del host, o WSL2 en mi caso) y aísla los contenedores a nivel de procesos, haciéndolos súper ligeros, eficientes y rápidos de arrancar.
